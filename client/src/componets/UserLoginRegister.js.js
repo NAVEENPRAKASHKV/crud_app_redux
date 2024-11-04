@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { validateForm } from "../utils/validation";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../store/userSlice";
 
 const UserLoginRegister = () => {
   const [isSignin, setSignin] = useState(false);
@@ -11,23 +13,21 @@ const UserLoginRegister = () => {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const submitForm = (e) => {
     e.preventDefault();
-
     // Validate all fields
     const validationErrors = validateForm(formData, isSignin);
     setErrors(validationErrors);
-    console.log(errors);
-
     // Check if there are no errors before submitting
     const noErrors = Object.values(validationErrors).every(
       (error) => error === null
     );
     if (noErrors) {
-      console.log("Form data submitted successfully:", formData);
+      console.log("Form data before dispatch:", formData);
       // Form submission logic here
-      navigate("/");
+      dispatch(registerUser(formData));
     }
   };
 
