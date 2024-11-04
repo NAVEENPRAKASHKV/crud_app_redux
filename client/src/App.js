@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Body from "./componets/Body";
 import AdminLogin from "./componets/AdminLogin";
-import UserLogin from "./componets/UserLogin";
+import UserLoginRegister from "./componets/UserLoginRegister.js";
 
 function App() {
   const appRouter = createBrowserRouter([
@@ -11,11 +11,11 @@ function App() {
     },
     {
       path: "/adminlogin",
-      element: <AdminLogin/>,
+      element: <AdminLogin />,
     },
     {
       path: "/login",
-      element: <UserLogin/>,
+      element: <UserLoginRegister />,
     },
   ]);
   return <RouterProvider router={appRouter} />;
