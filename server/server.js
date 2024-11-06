@@ -15,6 +15,7 @@ const noCache = (req, res, next) => {
   res.setHeader("Expires", "0");
   next();
 };
+
 app.use(noCache);
 app.use(
   cors({
@@ -27,7 +28,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use("/public", express.static("public"));
 mongoose.connect(process.env.MONGO_URI);
 
 app.use("/", userRouter);

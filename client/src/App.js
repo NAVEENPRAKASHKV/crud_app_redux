@@ -1,23 +1,7 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Body from "./componets/Body";
-import AdminLogin from "./componets/AdminLogin";
-import UserLoginRegister from "./componets/UserLoginRegister.js";
+import { RouterProvider } from "react-router-dom";
+import appRouter from "./componets/AppRoutes";
 
 function App() {
-  const appRouter = createBrowserRouter([
-    {
-      path: "/",
-      element: <Body />,
-    },
-    {
-      path: "/adminlogin",
-      element: <AdminLogin />,
-    },
-    {
-      path: "/login",
-      element: <UserLoginRegister />,
-    },
-  ]);
   return <RouterProvider router={appRouter} />;
 }
 

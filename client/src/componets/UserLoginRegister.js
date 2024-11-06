@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { validateForm } from "../utils/validation";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser, loginUser } from "../store/userSlice";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { registerUser } from "../store/userSlice";
 
 const UserLoginRegister = () => {
   const [isSignin, setSignin] = useState(false);
@@ -12,22 +12,39 @@ const UserLoginRegister = () => {
     password: "",
   });
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userStore = useSelector((store) => store.user);
+  const token = userStore?.userInfo?.token;
 
-  const submitForm = (e) => {
-    e.preventDefault();
-    // Validate all fields
-    const validationErrors = validateForm(formData, isSignin);
-    setErrors(validationErrors);
-    // Check if there are no errors before submitting
-    const noErrors = Object.values(validationErrors).every(
-      (error) => error === null
-    );
-    if (noErrors) {
-      console.log("Form data before dispatch:", formData);
-      // Form submission logic here
-      dispatch(registerUser(formData));
+  if (token) navigate("/");
+
+  const submitForm = async (e) => {
+    try {
+      e.preventDefault();
+      // Validate all fields
+      const validationErrors = validateForm(formData, isSignin);
+      setErrors(validationErrors);
+      // Check if there are no errors before submitting
+      const noErrors = Object.values(validationErrors).every(
+        (error) => error === null
+      );
+      if (noErrors) {
+        // Form submission logic here
+        if (isSignin) {
+          console.log("register");
+          dispatch(registerUser(formData));
+          navigate("/login");
+        }
+        if (!isSignin) {
+          console.log("is login ");
+          const response = await dispatch(loginUser(formData));
+          if (response.payload.token) navigate("/");
+        }
+      }
+    } catch (error) {
+      console.log("error while login", error);
+      alert("check the password and login no user exits");
     }
   };
 
