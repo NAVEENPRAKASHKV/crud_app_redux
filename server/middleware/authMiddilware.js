@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../model/userModel"); 
+const User = require("../model/userModel");
 
 const userAuthenticateToken = async (req, res, next) => {
   try {
@@ -8,8 +8,8 @@ const userAuthenticateToken = async (req, res, next) => {
       return res.status(401).json({ message: "Authorization token required" });
     }
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET ); 
-    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     // Find user by decoded ID and exclude the password
     req.user = await User.findById(decoded.id).select("-password");
     if (!req.user) {
@@ -22,16 +22,14 @@ const userAuthenticateToken = async (req, res, next) => {
   }
 };
 
-
-const adminAuthenticateToken=(req,res,next)=>{
-  userAuthenticateToken(req,res,()=>{
-    if (req.user && req.user.isAdmin) {
+const adminAuthenticateToken = (req, res, next) => {
+  userAuthenticateToken(req, res, () => {
+    if (req.user && req.user.role === "admin") {
       next();
     } else {
       res.status(401).json({ message: "Not authorized as an admin" });
     }
-  })
-}
+  });
+};
 
-
-module.exports = {userAuthenticateToken,adminAuthenticateToken};
+module.exports = { userAuthenticateToken, adminAuthenticateToken };

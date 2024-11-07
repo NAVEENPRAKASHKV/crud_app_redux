@@ -10,7 +10,6 @@ const ProtectedRoutes = ({ element, allowedRoles }) => {
   const userStore = useSelector((store) => store?.user);
   const isAuthenticated = userStore?.isAuthenticated;
   const role = userStore?.role;
-
   if (!isAuthenticated) return <Navigate to="/login" />;
   if (!allowedRoles.includes(role)) return <Navigate to="/" />;
   return element;
@@ -42,7 +41,7 @@ const appRouter = createBrowserRouter([
         ),
       },
       {
-        path: "/admindashboard",
+        path: "/admin/admindashboard",
         element: (
           <ProtectedRoutes element={<AdminPanel />} allowedRoles={["admin"]} />
         ),

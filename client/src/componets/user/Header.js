@@ -33,7 +33,7 @@ const Header = () => {
           </li>
           {role === "admin" && (
             <li>
-              <Link to="/admindashboard" className="hover:underline">
+              <Link to="/admin/admindashboard" className="hover:underline">
                 ADMIN DASHBOARD
               </Link>
             </li>
