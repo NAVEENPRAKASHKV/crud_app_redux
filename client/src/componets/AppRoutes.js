@@ -5,6 +5,7 @@ import ProfileChange from "./user/ProfileChange.js";
 import Home from "./user/Home.js";
 import { useSelector } from "react-redux";
 import AdminPanel from "./admin/AdminPanel.js";
+import CreateUser from "./admin/CreateUser.js";
 
 const ProtectedRoutes = ({ element, allowedRoles }) => {
   const userStore = useSelector((store) => store?.user);
@@ -44,6 +45,12 @@ const appRouter = createBrowserRouter([
         path: "/admin/admindashboard",
         element: (
           <ProtectedRoutes element={<AdminPanel />} allowedRoles={["admin"]} />
+        ),
+      },
+      {
+        path: "/admin/adduser",
+        element: (
+          <ProtectedRoutes element={<CreateUser />} allowedRoles={["admin"]} />
         ),
       },
     ],

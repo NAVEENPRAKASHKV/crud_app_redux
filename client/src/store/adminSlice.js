@@ -23,6 +23,44 @@ export const fetchUsers = createAsyncThunk(
     }
   }
 );
+export const deleteUser = createAsyncThunk(
+  "admin/deleteUser",
+  async (userId, thunkAPI) => {
+    try {
+      console.log("user asyc");
+      const state = thunkAPI.getState();
+      const response = await api.delete(`admin/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${state.admin.token}`,
+        },
+      });
+      return userId;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "an Error occured";
+      return thunkAPI.rejectWithValue({ message: errorMessage });
+    }
+  }
+);
+export const createUser = createAsyncThunk(
+  "admin/create",
+  async (userData, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+      const response = await api.post("admin/users/create", userData, {
+        headers: {
+          Authorization: `Bearer ${state.admin.token}`,
+        },
+      });
+      console.log("creted user", response.data);
+      alert("User Profile created");
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "an Error occured";
+      alert(`error :${errorMessage}`);
+      return thunkAPI.rejectWithValue({ message: errorMessage });
+    }
+  }
+);
 
 const initialState = {
   usersInfo: [],
@@ -45,11 +83,37 @@ const adminSlice = createSlice({
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.usersInfo = action.payload; // Store the fetched user data
+        state.usersInfo = action.payload;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; // Store any error message
+        state.error = action.payload;
+      })
+      .addCase(deleteUser.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.usersInfo = state.usersInfo.filter(
+          (user) => user._id !== action.payload
+        );
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
+      })
+      .addCase(createUser.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.usersInfo.push(action.payload);
       });
   },
 });
