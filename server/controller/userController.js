@@ -19,14 +19,12 @@ const updateProfile = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     console.log(req.body);
-
     // Check for required fields
     if (!email) {
       return res
         .status(400)
         .json({ success: false, message: "Email is required" });
     }
-
     // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
@@ -34,7 +32,6 @@ const updateProfile = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-
     // Prepare updated data
     const updatedData = {};
     if (username) {
@@ -81,6 +78,7 @@ const loginUser = async (req, res) => {
         token: generateToken(user._id),
         email: user.email,
         profileImage: user.profileImage,
+        role: user.role,
       });
     } else {
       res.status(401).json({ message: "Invalid credentials" });

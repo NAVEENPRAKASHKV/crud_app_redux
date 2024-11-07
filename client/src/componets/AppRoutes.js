@@ -1,34 +1,53 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Body from "./user/Body.js";
-import AdminLogin from "./admin/AdminLogin.js";
 import UserLoginRegister from "./UserLoginRegister.js";
 import ProfileChange from "./user/ProfileChange.js";
 import Home from "./user/Home.js";
 import { useSelector } from "react-redux";
+import AdminPanel from "./admin/AdminPanel.js";
 
-const ProtectedRoutes = ({ element }) => {
-  const isAuthenticated = useSelector((store) => store?.user?.isAuthenticated);
-  return isAuthenticated ? element : <Navigate to="/login" />;
+const ProtectedRoutes = ({ element, allowedRoles }) => {
+  const userStore = useSelector((store) => store?.user);
+  const isAuthenticated = userStore?.isAuthenticated;
+  const role = userStore?.role;
+
+  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (!allowedRoles.includes(role)) return <Navigate to="/" />;
+  return element;
 };
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <ProtectedRoutes element={<Body />} />,
+    element: (
+      <ProtectedRoutes element={<Body />} allowedRoles={["admin", "user"]} />
+    ),
     children: [
       {
         path: "/profilechange",
-        element: <ProfileChange />,
+        element: (
+          <ProtectedRoutes
+            element={<ProfileChange />}
+            allowedRoles={["admin", "user"]}
+          />
+        ),
       },
       {
-        path: "home",
-        element: <Home />,
+        path: "/home",
+        element: (
+          <ProtectedRoutes
+            element={<Home />}
+            allowedRoles={["admin", "user"]}
+          />
+        ),
+      },
+      {
+        path: "/admindashboard",
+        element: (
+          <ProtectedRoutes element={<AdminPanel />} allowedRoles={["admin"]} />
+        ),
       },
     ],
-  },
-  {
-    path: "adminlogin",
-    element: <AdminLogin />,
   },
   {
     path: "/login",

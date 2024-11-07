@@ -9,6 +9,7 @@ const Header = () => {
   const username = userDetails?.userInfo?.username || "Guest";
   const profileImage = userDetails?.userInfo?.profileImage || null;
   const imagePath = REACT_APP_API_URL + profileImage;
+  const role = userDetails?.role;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -30,6 +31,13 @@ const Header = () => {
               Edit Profile
             </Link>
           </li>
+          {role === "admin" && (
+            <li>
+              <Link to="/admindashboard" className="hover:underline">
+                ADMIN DASHBOARD
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
       <div className="flex items-center space-x-3">

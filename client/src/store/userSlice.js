@@ -55,6 +55,7 @@ export const loginUser = createAsyncThunk(
       const response = await api.post("/login", userData);
       return response.data;
     } catch (error) {
+      alert(`Error in registration: ${error.response?.data?.message}`);
       return thunkAPI.rejectWithValue(
         error.response.data.message || "An error occurred"
       );
@@ -67,6 +68,7 @@ const initialState = {
   userInfo: null,
   token: localStorage.getItem("userToken") || null,
   isAuthenticated: !!localStorage.getItem("token"),
+  role: "user",
   loading: false,
   error: null,
   protectedData: null,
@@ -109,6 +111,7 @@ const userSlice = createSlice({
         state.userInfo = action.payload; // Store user info
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.role = action.payload.role;
         localStorage.setItem("userToken", action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
