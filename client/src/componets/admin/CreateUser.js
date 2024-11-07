@@ -101,12 +101,12 @@ const CreateUser = () => {
           <div>
             <button
               type="submit"
-              className="py-2 px-4 my-4 mx-4 bg-green-300 rounded-xl"
+              className="py-2 px-4 my-4 mx-4 bg-green-300 rounded-xl hover:bg-green-500 hover:text-white"
             >
               Add +
             </button>
             <button
-              className="py-2 px-4 my-4 mx-4 bg-gray-300 rounded-xl"
+              className="py-2 px-4 my-4 mx-4 bg-gray-300 rounded-xl  hover:text-white hover:bg-gray-400"
               onClick={handleCancel}
             >
               Cancel
