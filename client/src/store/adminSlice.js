@@ -61,12 +61,21 @@ export const createUser = createAsyncThunk(
     }
   }
 );
-export const updateUser = createAsyncThunk("admin/updateUser", async (user) => {
-  const response = await api.put(`/api/users/${user.id}`, user, {
-    headers: { "Content-Type": "application/json" },
-  });
-  return response.data;
-});
+export const updateUser = createAsyncThunk(
+  "admin/updateUser",
+  async (user, thunkAPI) => {
+    try {
+      const response = await api.put(`/api/users/${user.id}`, user, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log(response.data);
+      // return  response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "an Error occured";
+      return thunkAPI.rejectWithValue({ message: errorMessage });
+    }
+  }
+);
 
 const initialState = {
   selectedUser: null,
@@ -125,6 +134,23 @@ const adminSlice = createSlice({
       .addCase(createUser.fulfilled, (state, action) => {
         state.loading = false;
         state.usersInfo.push(action.payload);
+      })
+      .addCase(updateUser.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.error = null;
+        state.loading = false;
+        const index = state.usersInfo.findIndex(
+          (user) => user._id === action?.payload?._id
+        );
+        if (index !== -1) state.usersInfo[index] = action.payload;
+        else state.usersInfo.push(action.payload);
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.payload?.message;
       });
   },
 });

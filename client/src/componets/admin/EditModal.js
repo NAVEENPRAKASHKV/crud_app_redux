@@ -26,7 +26,7 @@ const EditModal = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-4">Edit User</h2>
+        <h2 className="text-2xl font-semibold mb-4 ">Edit User Credetials</h2>
         <div className="mb-4">
           <label className="block text-gray-700">Username:</label>
           <input
@@ -52,7 +52,7 @@ const EditModal = ({ isOpen, onClose }) => {
           <input
             type="text"
             name="role"
-            value={updatedUser?.role || "user"}
+            value={updatedUser?.role || "no roll"}
             onChange={handleChange}
             className="w-full border rounded p-2"
           />
