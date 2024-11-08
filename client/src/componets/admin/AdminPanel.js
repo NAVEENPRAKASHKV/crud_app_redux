@@ -4,7 +4,6 @@ import Table from "./Table";
 const AdminPanel = () => {
   return (
     <div>
-      AdminPanel
       <Table />
     </div>
   );

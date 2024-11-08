@@ -9,7 +9,8 @@ import CreateUser from "./admin/CreateUser.js";
 
 const ProtectedRoutes = ({ element, allowedRoles }) => {
   const userStore = useSelector((store) => store?.user);
-  const isAuthenticated = userStore?.isAuthenticated;
+  const isAuthenticated =
+    userStore?.isAuthenticated || !!localStorage.getItem("userToken");
   const role = userStore?.role;
   if (!isAuthenticated) return <Navigate to="/login" />;
   if (!allowedRoles.includes(role)) return <Navigate to="/" />;

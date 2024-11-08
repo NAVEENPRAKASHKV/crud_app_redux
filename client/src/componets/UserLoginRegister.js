@@ -15,10 +15,12 @@ const UserLoginRegister = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userStore = useSelector((store) => store.user);
-  const token = userStore?.userInfo?.token;
-
-  if (token) navigate("/");
-
+  const token = userStore?.userInfo?.token || localStorage.getItem("userToken");
+  useEffect(() => {
+    if (token) {
+      navigate("/"); // Replace '/profile' with the actual profile route
+    }
+  }, [token, navigate]);
   const submitForm = async (e) => {
     try {
       e.preventDefault();
@@ -32,6 +34,7 @@ const UserLoginRegister = () => {
       if (noErrors) {
         // Form submission logic here
         if (isSignin) {
+          console.log("the value of isSignIn", isSignin);
           console.log("register");
           dispatch(registerUser(formData));
           navigate("/login");

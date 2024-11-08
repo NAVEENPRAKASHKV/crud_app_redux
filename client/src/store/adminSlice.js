@@ -13,7 +13,6 @@ export const fetchUsers = createAsyncThunk(
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(response.data);
       return response.data; // Return the data to pass it to `fulfilled`
     } catch (error) {
       // Return the error to be handled in `rejected`
@@ -65,13 +64,16 @@ export const updateUser = createAsyncThunk(
   "admin/updateUser",
   async (user, thunkAPI) => {
     try {
-      const response = await api.put(`/api/users/${user.id}`, user, {
+      console.log(user);
+      const response = await api.put(`/admin/users/${user._id}`, user, {
         headers: { "Content-Type": "application/json" },
       });
       console.log(response.data);
-      // return  response.data;
+      alert("User updated successfully");
+      return response.data.user;
     } catch (error) {
       const errorMessage = error.response?.data?.message || "an Error occured";
+      alert(`error in updation :${errorMessage}`);
       return thunkAPI.rejectWithValue({ message: errorMessage });
     }
   }

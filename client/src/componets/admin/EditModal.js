@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../../store/adminSlice";
+import { validateForm } from "../../utils/validation";
 
 const EditModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -17,6 +18,16 @@ const EditModal = ({ isOpen, onClose }) => {
   };
 
   const handleSave = () => {
+    const validatedData = validateForm(updatedUser);
+    console.log("validated data", validatedData);
+
+    const isAllValidated = Object.values(validatedData).every(
+      (value) => value === null
+    );
+
+    if (!isAllValidated) {
+      return alert("please check the updated credentials");
+    }
     dispatch(updateUser(updatedUser));
     onClose();
   };
@@ -32,7 +43,7 @@ const EditModal = ({ isOpen, onClose }) => {
           <input
             type="text"
             name="username"
-            value={updatedUser?.username || "no username"}
+            value={updatedUser?.username}
             onChange={handleChange}
             className="w-full border rounded p-2"
           />
@@ -42,7 +53,7 @@ const EditModal = ({ isOpen, onClose }) => {
           <input
             type="email"
             name="email"
-            value={updatedUser?.email || "no password"}
+            value={updatedUser?.email}
             onChange={handleChange}
             className="w-full border rounded p-2"
           />
@@ -52,7 +63,7 @@ const EditModal = ({ isOpen, onClose }) => {
           <input
             type="text"
             name="role"
-            value={updatedUser?.role || "no roll"}
+            value={updatedUser?.role}
             onChange={handleChange}
             className="w-full border rounded p-2"
           />

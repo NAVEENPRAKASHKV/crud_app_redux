@@ -71,49 +71,45 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
-const editUser = async (req, res) => {
+
+const updateUser = async (req, res) => {
   try {
-    const { username, email, password, _id } = req.body;
-    console.log(req.body);
-    // Check for required fields
-    if (!_id) {
-      return res
-        .status(400)
-        .json({ success: false, message: "user id not found" });
-    }
-    // Find the user by email
-    const user = await User.findOne({ _id });
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-    // Prepare updated data
-    const updatedData = {};
-    if (username) {
-      updatedData.username = username;
-    }
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      updatedData.password = await bcrypt.hash(password, salt); // Fixed 'this.password' to 'password'
-    }
-    if (req.file) {
-      updatedData.profileImage = `/public/uploads/${req.file.filename}`; // Ensure correct path
+    const { email, username, role } = req.body;
+    console.log("Request body in updateUser:", req.body);
+
+    // Check if all fields are provided
+    if (!email || !username || !role) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Update the user details in the database
-    const updatedUser = await User.findOneAndUpdate({ email }, updatedData, {
-      new: true,
-      runValidators: true, // Optional: ensures that validation is applied to updated data
+    // Check if another user already exists with the same email
+    const existingUser = await User.findOne({ email });
+    if (existingUser && existingUser._id.toString() !== req.params.id) {
+      return res
+        .status(409)
+        .json({ message: "Email already in use by another user" });
+    }
+
+    // Update the user with the new data
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id, // Assume user ID is passed as a URL parameter
+      { email, username, role },
+      { new: true, runValidators: true } // `new: true` returns the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
     });
-    res.json({ success: true, user: updatedUser });
   } catch (error) {
-    console.error(error); // Log error for debugging
-    res.status(500).json({
-      success: false,
-      message: "Profile update failed",
-      error: error.message,
-    });
+    console.error("Error updating user:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while updating the user" });
   }
 };
 
@@ -121,5 +117,5 @@ module.exports = {
   getUsers,
   deleteUser,
   createUser,
-  editUser: [upload.single("profileImage"), editUser],
+  updateUser,
 };
