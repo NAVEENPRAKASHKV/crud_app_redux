@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchUsers, deleteUser } from "../../store/adminSlice";
+import {
+  fetchUsers,
+  deleteUser,
+  setSelectedUser,
+} from "../../store/adminSlice";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import EditModal from "./EditModal";
 
 const Table = () => {
   const [userInfo, setUserInfo] = useState([]);
@@ -11,9 +16,14 @@ const Table = () => {
   const dispatch = useDispatch();
   const userDetails = useSelector((store) => store.admin.usersInfo);
   const loading = useSelector((store) => store.admin.loading); // Assuming there's a loading state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleEdit = (user) => {
+    dispatch(setSelectedUser(user));
+    setIsModalOpen(true);
+  };
 
   const handleDelete = (userId) => {
-    // Dispatch delete action
     dispatch(deleteUser(userId));
   };
 
@@ -99,7 +109,10 @@ const Table = () => {
                     {user.role}
                   </td>
                   <td className="border-b-2 border-black px-4 py-2 flex justify-center">
-                    <button className="mr-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700">
+                    <button
+                      className="mr-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700"
+                      onClick={() => handleEdit(user)}
+                    >
                       Edit
                     </button>
                     <button
@@ -115,6 +128,7 @@ const Table = () => {
           </table>
         </div>
       </div>
+      <EditModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

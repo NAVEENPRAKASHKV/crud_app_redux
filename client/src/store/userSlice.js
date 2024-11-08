@@ -63,6 +63,13 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk("admin/updateUser", async (user) => {
+  const response = await api.put(`/api/users/${user.id}`, user, {
+    headers: { "Content-Type": "application/json" },
+  });
+  return response.data;
+});
+
 // Initial state
 const initialState = {
   userInfo: null,

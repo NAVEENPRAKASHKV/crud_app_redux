@@ -61,8 +61,15 @@ export const createUser = createAsyncThunk(
     }
   }
 );
+export const updateUser = createAsyncThunk("admin/updateUser", async (user) => {
+  const response = await api.put(`/api/users/${user.id}`, user, {
+    headers: { "Content-Type": "application/json" },
+  });
+  return response.data;
+});
 
 const initialState = {
+  selectedUser: null,
   usersInfo: [],
   token: localStorage.getItem("userToken") || null,
   loading: false,
@@ -73,7 +80,11 @@ const initialState = {
 const adminSlice = createSlice({
   name: "admin",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setSelectedUser: (state, action) => {
+      state.selectedUser = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsers.pending, (state) => {
@@ -117,5 +128,5 @@ const adminSlice = createSlice({
       });
   },
 });
-
+export const { setSelectedUser } = adminSlice.actions;
 export default adminSlice.reducer;
